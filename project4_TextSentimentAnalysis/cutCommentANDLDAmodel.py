@@ -52,23 +52,26 @@ def seg_jieba_sentence(sentence):
 
 def topicsLDA(posCtovec, negCtoVec):
     time1 = time.time()
+    for num_topic in range(2,4,1):
+        # num_topic=2
+        pos_dic = corpora.Dictionary(posCtovec)  # 建立词典posCtovec可以视为2位list
+        pos_corpus = [pos_dic.doc2bow(ele) for ele in posCtovec]  # 建立预料库
+        pos_lda = models.LdaModel(corpus=pos_corpus, num_topics=num_topic, id2word=pos_dic)  # LDA
+        # 模型训练
+        print('好评主题如下：')
+        print(pos_lda.bound(pos_corpus))#困惑度来评价
+        for i in range(num_topic):
+            print(pos_lda.print_topic(i))
 
-    num_topic=2
-    pos_dic = corpora.Dictionary(posCtovec)
-    pos_corpus = [pos_dic.doc2bow(ele) for ele in posCtovec]
-    pos_lda = models.LdaModel(corpus=pos_corpus, num_topics=num_topic, id2word=pos_dic)
-    print('好评主题如下：')
-    for i in range(num_topic):
-        print(pos_lda.print_topic(i))
+        print('-------------------------------------分割线-------------------------------------')
 
-    print('-------------------------------------分割线-------------------------------------')
-
-    neg_dic = corpora.Dictionary(negCtoVec)
-    neg_corpus = [neg_dic.doc2bow(ele) for ele in negCtoVec]
-    neg_lda = models.LdaModel(corpus=neg_corpus, num_topics=num_topic, id2word=neg_dic)
-    print('差评主题如下：')
-    for i in range(num_topic):
-        print(neg_lda.print_topic(i))
+        neg_dic = corpora.Dictionary(negCtoVec)
+        neg_corpus = [neg_dic.doc2bow(ele) for ele in negCtoVec]
+        neg_lda = models.LdaModel(corpus=neg_corpus, num_topics=num_topic, id2word=neg_dic)
+        print('差评主题如下：')
+        print(neg_lda.bound(neg_corpus))
+        for i in range(num_topic):
+            print(neg_lda.print_topic(i))
     time2 = time.time()
     print('主题分析耗时：%.4f 秒'%(time2-time1))
 
